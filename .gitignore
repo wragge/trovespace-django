@@ -1,0 +1,6 @@
+*.pyc
+trovespace/settings_local.py
+trovespace/settings_prod.py
+trovetv/*
+trovetraces/credentials.py
+trovetraces/data/*

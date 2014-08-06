@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="container">
+		<div class="page-header">
+			<h1>Trove Traces <small>searching for signs on the wild, wild web</small></h1>
+		</div>
+		<div class="row">
+			<div class="col-md-6 text-center home-summary">
+			    {{ backlinks }} links
+			</div>
+			<div class="col-md-6 text-center home-summary">
+			    <p><a href="{% url 'article-list' %}"><i class="fa fa-arrow-circle-left"></i> {{ articles }} articles</a></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 text-center home-summary">
+			    <p><a href="{% url 'page-list' %}">{{ pages }} pages <i class="fa fa-arrow-circle-right"></i></a></p>
+			</div>
+			<div class="col-md-6 text-center home-summary">
+			    {{ domains }} domains
+			</div>
+		</div>
+	</div>
+{% endblock %}

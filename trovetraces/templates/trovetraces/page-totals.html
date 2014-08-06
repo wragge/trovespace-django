@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="container">
+		<h2>Top pages</h2>
+		<div class="row">
+			<div class="col-md-4">
+			    <h3>Pages with most links</h3>
+			    <div class="list-group">
+			        {% for page in top_pages %}
+			        <a class="list-group-item" href="{% url 'page-detail' pk=page.id %}">
+			        	<span class="badge">{{ page.backlink_set.all|length }}</span>
+			            <h5 class="list-group-item-heading">{{ page.page_title }}</h5>
+			            <p class="list-group-item-text text-muted">{{ page.domain }}</p>
+			        </a>
+			        {% endfor %}
+				</div>
+			</div>
+			<div class="col-md-4">
+			    <h3>Domains with most links</h3>
+			    <div class="list-group">
+			        {% for domain in top_domains %}
+			        <a class="list-group-item" href="{% url 'domain-page-list' domain=domain.domain %}">
+			        	<span class="badge">{{ domain.total_links }}</span>
+			            <h5 class="list-group-item-heading">{{ domain.domain }}</h5>
+			            <p class="list-group-item-text"></p>
+			        </a>
+			        {% endfor %}
+				</div>
+			</div>
+			<div class="col-md-4">
+			    <h3>Domains with most pages</h3>
+			    <div class="list-group">
+			        {% for domain in top_domain_pages %}
+			        <a class="list-group-item" href="{% url 'domain-page-list' domain=domain.domain %}">
+			        	<span class="badge">{{ domain.total_pages }}</span>
+			            <h5 class="list-group-item-heading">{{ domain.domain }}</h5>
+			            <p class="list-group-item-text"></p>
+			        </a>
+			        {% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

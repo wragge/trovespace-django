@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="container">
+	    <header class="row">
+	    	<div class="col-md-9">
+	    		<h2>{{ object.page_title }}</h2>
+	    		<p>{{ object.url|urlize }}</p>
+	    	</div>
+	    	<div class="col-md-3">
+	    		<div class="pull-right">
+	    			<a class="thumbnail webpage" href="{{ object.url }}">
+	    				<img src="http://img.bitpixels.com/getthumbnail?code=42453&size=200&url={{ object.url }}">
+	    			</a>
+	    			<div class="caption">
+	    				<small>Website thumbnails by <a href="http://www.bitpixels.com/">BitPixels</a></small>
+	    			</div>
+	    		</div>
+	    	</div>
+		</header>
+		<h3>Trove links</h3>
+	    <div class="list-group">
+	        {% for article in articles %}
+	        	{% if article %}
+	            <a class="list-group-item" href="{% url 'article-detail' pk=article.id %}">
+	            	<span class="badge">{{ article.backlink_set.all|length }} citation{{ article.backlink_set.all|length|pluralize }}</span>
+	            	<h4 class="list-group-item-heading">{{ article.title }}</h4>
+	            	<p class="list-group-item-text">{{ article.date|date:'j F Y' }}, <i>{{ article.newspaper_title }}</i>, page {{ article.page }}</p>
+	            	{% for link in article.backlink_set.all %}
+	            		{% if link.page = object %}
+	            			<p class="list-group-item-text context">&hellip;{{ link.context|safe }}&hellip;</p>
+	            		{% endif %}
+	            	{% endfor %}
+	            </a>
+	            {% endif %}
+	        {% endfor %}
+	    </div>
+	</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="container">
+	    <h2>{{ object.title }}</h2>
+	    <p><i>{{ object.newspaper_title }}</i>, {{ object.date|date:'j F Y' }}, page {{ object.page }}</p>
+	    <p>{{ object.url|urlize }}
+	    <div class="list-group">
+
+	        {% for page in pages %}
+	            <a class="list-group-item" href="{% url 'page-detail' pk=page.id %}">
+	            	<span class="badge">{{ page.backlink_set.all|length }} Trove link{{ page.backlink_set.all|length|pluralize }}</span>
+	            	<h4 class="list-group-item-heading">{{ page.page_title }}</h4>
+	            	<p class="list-group-item-text">{{ page.url }}</p>
+	            </a>
+	        {% endfor %}
+	    </div>
+	</div>
+{% endblock %}

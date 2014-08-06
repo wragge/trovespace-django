@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="container">
+		<h2>Top articles</h2>
+		<div class="row">
+			<div class="col-md-4">
+			    <h3>Articles with most links</h3>
+			    <div class="list-group">
+			        {% for article in top_articles %}
+			        <a class="list-group-item" href="{% url 'article-detail' pk=article.id %}">
+			        	<span class="badge">{{ article.total_links }}</span>
+			            <h5 class="list-group-item-heading">{{ article.title }}</h5>
+			            <p class="list-group-item-text text-muted">{{ article.date|date:'j F Y' }}, <i>{{ article.newspaper_title }}</i>, page {{ article.page }}</p>
+			        </a>
+			        {% endfor %}
+				</div>
+			</div>
+			<div class="col-md-4">
+			    <h3>Newspapers with most links</h3>
+			    <div class="list-group">
+			        {% for newspaper in top_newspapers %}
+			        <a class="list-group-item" href="{% url 'newspaper-article-list' newspaper=newspaper.newspaper_id %}">
+			        	<span class="badge">{{ newspaper.total_links }}</span>
+			            <h5 class="list-group-item-heading">{{ newspaper.newspaper_title }}</h5>
+			            <p class="list-group-item-text"></p>
+			        </a>
+			        {% endfor %}
+				</div>
+			</div>
+			<div class="col-md-4">
+			    <h3>Newspapers with most articles</h3>
+			    <div class="list-group">
+			        {% for newspaper in top_newspaper_articles %}
+			        <a class="list-group-item" href="{% url 'newspaper-article-list' newspaper=newspaper.newspaper_id %}">
+			        	<span class="badge">{{ newspaper.total_articles }}</span>
+			            <h5 class="list-group-item-heading">{{ newspaper.newspaper_title }}</h5>
+			            <p class="list-group-item-text"></p>
+			        </a>
+			        {% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
