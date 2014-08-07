@@ -4,8 +4,9 @@
 	<div class="container">
 	    <header class="row">
 	    	<div class="col-md-9">
-	    		<h2>{{ object.page_title }}</h2>
-	    		<p>{{ object.url|urlize }}</p>
+	    		<h2>{% if object.page_title %}{{ object.page_title }}{% else %}<span class="text-muted">no title</span>{% endif %}</h2>
+	    		<p><a href="{{ object.url }}">{{ object.url }} <i class="fa fa-external-link"></i></a></p>
+	    		<p>All pages from this domain: <a href="{% url 'domain-page-list' object.domain %}">{{ object.domain }}</a></p>
 	    	</div>
 	    	<div class="col-md-3">
 	    		<div class="pull-right">
@@ -18,7 +19,7 @@
 	    		</div>
 	    	</div>
 		</header>
-		<h3>Trove links</h3>
+		<h3>Trove links on this page</h3>
 	    <div class="list-group">
 	        {% for article in articles %}
 	        	{% if article %}

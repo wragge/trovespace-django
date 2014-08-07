@@ -4,15 +4,21 @@
 {% block content %}
 	<div class="container">
 	    <h2>Pages{% if domain %} &ndash; {{ domain }}{% endif %}</h2>
-	    {% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+	    <p>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} &middot; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+	    {% if page_obj.paginator.num_pages > 1 %}
+	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+	    {% endif %}
 	    <div class="list-group">
 	        {% for wpage in object_list %}
 	            <a class="list-group-item" href="{% url 'page-detail' pk=wpage.id %}">
 	            	<span class="badge">{{ wpage.backlink_set.all|length }} Trove link{{ wpage.backlink_set.all|length|pluralize }}</span>
-	            	<h4 class="list-group-item-heading">{{ wpage.page_title }}</h4>
+	            	<h4 class="list-group-item-heading">{% if wpage.page_title %}{{ wpage.page_title }}{% else %}<span class="text-muted">no title</span>{% endif %}</h4>
 	            	<p class="list-group-item-text">{{ wpage.domain }}</p>
 	            </a>
 	        {% endfor %}
 	    </div>
+	    {% if page_obj.paginator.num_pages > 1 %}
+	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+	    {% endif %}
 	</div>
 {% endblock %}

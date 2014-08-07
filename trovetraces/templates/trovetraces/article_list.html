@@ -4,7 +4,10 @@
 {% block content %}
 	<div class="container">
 	    <h2>Articles{% if newspaper %} &ndash; {{ newspaper.newspaper_title }}{% endif %}</h2>
-	    {% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+	    <p>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} &middot; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+	    {% if page_obj.paginator.num_pages > 1 %}
+	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+	    {% endif %}
 	    <div class="list-group">
 	        {% for article in object_list %}
 	            <a class="list-group-item" href="{% url 'article-detail' pk=article.id %}">
@@ -14,5 +17,8 @@
 	            </a>
 	        {% endfor %}
 	    </div>
+	    {% if page_obj.paginator.num_pages > 1 %}
+	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+	    {% endif %}
 	</div>
 {% endblock %}

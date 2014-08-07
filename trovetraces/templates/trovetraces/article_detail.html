@@ -4,7 +4,10 @@
 	<div class="container">
 	    <h2>{{ object.title }}</h2>
 	    <p><i>{{ object.newspaper_title }}</i>, {{ object.date|date:'j F Y' }}, page {{ object.page }}</p>
-	    <p>{{ object.url|urlize }}
+	    <p><a href="{{ object.url }}">{{ object.url }} <i class="fa fa-external-link"></i></a></p>
+	    <p>All articles from this newspaper: <a href="{% url 'newspaper-article-list' object.newspaper_id %}">{{ object.newspaper_title }}</a></p>
+
+	    <h3>Pages that link to this article</h3>
 	    <div class="list-group">
 
 	        {% for page in pages %}
