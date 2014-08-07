@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-
+from django.views.generic import TemplateView
 from django.contrib import admin
 from trovetraces.views import *
 
@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', TemplateView.as_view(template_name='base.html')),
     url(r'^traces/$', TracesView.as_view()),
     url(r'^traces/top-pages/$', PageTotalsView.as_view(), name='top-pages'),
     url(r'^traces/top-articles/$', ArticleTotalsView.as_view(), name='top-articles'),
