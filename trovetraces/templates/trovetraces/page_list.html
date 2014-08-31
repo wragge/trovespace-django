@@ -3,22 +3,52 @@
 
 {% block content %}
 	<div class="container">
-	    <h2>Pages{% if domain %} &ndash; {{ domain }}{% endif %}</h2>
-	    <p>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} &middot; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
-	    {% if page_obj.paginator.num_pages > 1 %}
-	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
-	    {% endif %}
-	    <div class="list-group">
-	        {% for wpage in object_list %}
-	            <a class="list-group-item" href="{% url 'page-detail' pk=wpage.id %}">
-	            	<span class="badge">{{ wpage.backlink_set.all|length }} Trove link{{ wpage.backlink_set.all|length|pluralize }}</span>
-	            	<h4 class="list-group-item-heading">{% if wpage.page_title %}{{ wpage.page_title }}{% else %}<span class="text-muted">no title</span>{% endif %}</h4>
-	            	<p class="list-group-item-text">{{ wpage.domain }}</p>
-	            </a>
-	        {% endfor %}
-	    </div>
-	    {% if page_obj.paginator.num_pages > 1 %}
-	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
-	    {% endif %}
+		<div class="row">
+			<div class="col-md-9">
+			    <h2>Pages{% if domain %} &ndash; {{ domain }}{% endif %}</h2>
+			    <p>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} &middot; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+			    {% if page_obj.paginator.num_pages > 1 %}
+			    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+			    {% endif %}
+			    <div class="list-group">
+			        {% for wpage in page_obj.object_list %}
+			            <a class="list-group-item" href="{% url 'page-detail' pk=wpage.pk %}">
+			            	<span class="badge">{{ wpage.links }} Trove link{{ wpage.links|pluralize }}</span>
+			            	<h4 class="list-group-item-heading">{% if wpage.title_search %}{{ wpage.title_search }}{% else %}<span class="text-muted">no title</span>{% endif %}</h4>
+			            	<p class="list-group-item-text">{{ wpage.domain }}</p>
+			            </a>
+			        {% endfor %}
+			    </div>
+			    {% if page_obj.paginator.num_pages > 1 %}
+			    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+			    {% endif %}
+	    	</div>
+		   	<div class="col-md-3">
+				<h5>Search articles</h5>
+				<form method="get" action="{% url 'page-list' %}">
+					<div class="input-group">
+				      <input name="q" id="id_q" type="search" class="form-control"{% if query %} value="{{ query }}"{% endif %}>
+				      <span class="input-group-btn">
+				        <button class="btn btn-primary " type="submit">Search</button>
+				      </span>
+				    </div>
+					{% if num_articles %}
+				    	<p class="small text-muted">{{ num_articles }} articles</p>
+				    {% endif %}
+				    {% if paginator %}
+				    	<p class="small text-muted">{{ paginator.count }} matching articles</p>
+				    {% endif %}
+		    	</form>
+		    	{% if page_obj %}
+				    <h5>Sort</h5>
+				    <select name="order_by" id="order_by">
+				    	<option value="">Relevance</option>
+				    	<option {% if order == 'domain' %}selected="selected" {% endif %}value="domain">Domain</option>
+				    	<option {% if order == 'title' %}selected="selected" {% endif %}value="title">Title</option>
+				    	<option {% if order == '-links' %}selected="selected" {% endif %}value="-links">Links</option>
+				    </select>
+				{% endif %}
+	    	</div>
+		</div>
 	</div>
 {% endblock %}

@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, TemplateView
 from django.db.models import Count
+from django.template import RequestContext
+from django.views.generic.edit import FormMixin
+from haystack.views import SearchView
+from haystack.query import SearchQuerySet
 from trovetraces.models import Backlink, Page, Article
+from trovetraces.forms import ArticleSearchForm, PageSearchForm
 
 # Create your views here.
 
@@ -20,6 +25,106 @@ class TracesView(TemplateView):
 class BacklinkList(ListView):
 	model = Backlink
 	paginate_by = 25
+
+
+class ListSearchView(ListView, FormMixin):
+	order_by = None
+	searchqueryset = SearchQuerySet().filter(has_links=True)
+
+	def get_queryset(self):
+		"""Return filtered queryset. Uses form_valid() or form_invalid()."""
+		form = self.form_class(self.request.GET)
+		if form.is_valid() :
+			return self.form_valid(form)
+		else:
+			return self.form_invalid(form)
+
+	def form_valid(self, form):
+		q = form.cleaned_data.get('q', '')
+		order_by = self.request.GET.get('order_by', self.order_by)
+		sqs = self.searchqueryset
+		if q:
+			sqs = sqs.auto_query(q)
+		sqs = sqs.order_by(order_by)
+		return sqs
+
+	def form_invalid(self, form):
+		print 'invalid'
+		return self.form_empty()
+
+	def form_empty(self):
+		order_by = self.request.GET.get('order_by', self.order_by)
+		sqs = self.searchqueryset
+		sqs = sqs.order_by(order_by)
+		return sqs
+
+class PageSearchView(ListSearchView):
+	template_name = 'trovetraces/page_list.html'
+	paginate_by = 25
+	form_class = PageSearchForm
+	searchqueryset = SearchQuerySet().models(Page).filter(has_links=True)
+	order_by = 'title'
+
+	def form_valid(self, form):
+		q = form.cleaned_data.get('q', '')
+		self.query = q
+		domain = self.kwargs.get('domain')
+		self.domain = domain
+		order_by = self.request.GET.get('order_by')
+		sqs = self.searchqueryset
+		if q:
+			sqs = sqs.auto_query(q)
+		elif not order_by:
+			order_by = self.order_by
+		if domain:
+			sqs = sqs.filter(domain=domain)
+		if order_by:
+			sqs = sqs.order_by(order_by)
+			self.current_order = order_by
+		return sqs
+
+	def get_context_data(self, **kwargs):
+		kwargs = ListView.get_context_data(self, **kwargs)
+		kwargs['query'] = self.query
+		if self.domain:
+			kwargs['domain'] = self.domain
+		kwargs['order'] = self.current_order
+		return kwargs
+
+
+class ArticleSearchView(ListSearchView):
+	template_name = 'trovetraces/article_list.html'
+	paginate_by = 25
+	form_class = ArticleSearchForm
+	searchqueryset = SearchQuerySet().models(Article).filter(has_links=True)
+	order_by = 'date'
+	current_order = None
+
+	def form_valid(self, form):
+		q = form.cleaned_data.get('q', '')
+		self.query = q
+		newspaper_id = self.kwargs.get('newspaper')
+		self.newspaper_id = newspaper_id
+		order_by = self.request.GET.get('order_by')
+		sqs = self.searchqueryset
+		if q:
+			sqs = sqs.auto_query(q)
+		elif not order_by:
+			order_by = self.order_by
+		if newspaper_id:
+			sqs = sqs.filter(newspaper_id=newspaper_id)
+		if order_by:
+			sqs = sqs.order_by(order_by)
+			self.current_order = order_by
+		return sqs
+
+	def get_context_data(self, **kwargs):
+		kwargs = ListView.get_context_data(self, **kwargs)
+		kwargs['query'] = self.query
+		if self.newspaper_id:
+			kwargs['newspaper'] = Article.objects.values('newspaper_title', 'newspaper_id').filter(newspaper_id=self.newspaper_id)[0]
+		kwargs['order'] = self.current_order
+		return kwargs
 
 
 class PageList(ListView):

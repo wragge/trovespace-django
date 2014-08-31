@@ -3,22 +3,50 @@
 
 {% block content %}
 	<div class="container">
-	    <h2>Articles{% if newspaper %} &ndash; {{ newspaper.newspaper_title }}{% endif %}</h2>
-	    <p>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} &middot; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
-	    {% if page_obj.paginator.num_pages > 1 %}
-	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
-	    {% endif %}
-	    <div class="list-group">
-	        {% for article in object_list %}
-	            <a class="list-group-item" href="{% url 'article-detail' pk=article.id %}">
-	            	<span class="badge">{{ article.backlink_set.all|length }} citation{{ article.backlink_set.all|pluralize }}</span>
-	            	<h4 class="list-group-item-heading">{{ article.title }}</h4>
-	            	<p class="list-group-item-text">{{ article.date|date:'j F Y' }}, <i>{{ article.newspaper_title }}</i>, page {{ article.page }}</p>
-	            </a>
-	        {% endfor %}
-	    </div>
-	    {% if page_obj.paginator.num_pages > 1 %}
-	    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
-	    {% endif %}
+		<div class="row">
+			<div class="col-md-9">
+			    <h2>Articles{% if newspaper %} &ndash; {{ newspaper.newspaper_title }}{% endif %}</h2>
+			    <p>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} &middot; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+			    {% if page_obj.paginator.num_pages > 1 %}
+			    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+			    {% endif %}
+			    {{ page }}
+			    <div class="list-group">
+			        {% for article in page_obj.object_list %}
+			            <a class="list-group-item" href="{% url 'article-detail' pk=article.pk %}">
+			            	<span class="badge">{{ article.links }} citation{{ article.links|pluralize }}</span>
+			            	<h4 class="list-group-item-heading">{{ article.title_search }}</h4>
+			            	<p class="list-group-item-text">{{ article.date|date:'j F Y' }}, <i>{{ article.newspaper_title }}</i>, page {{ article.object.page }}</p>
+			            </a>
+			        {% endfor %}
+			    </div>
+			    {% if page_obj.paginator.num_pages > 1 %}
+			    	{% bootstrap_paginate page_obj range=10 show_prev_next="true" show_first_last="true" %}
+			    {% endif %}
+			</div>
+		   	<div class="col-md-3">
+				<h5>Search articles</h5>
+				<form method="get" action="{% url 'article-list' %}">
+					{{ form.non_field_errors }}
+					{{ form.errors }}
+					<div class="input-group">
+				      <input name="q" id="id_q" type="text" class="form-control"{% if query %} value="{{ query }}"{% endif %}>
+				      <span class="input-group-btn">
+				        <button class="btn btn-primary " type="submit">Search</button>
+				      </span>
+				    </div>
+
+		    	</form>
+		    	{% if page_obj %}
+				    <h5>Sort</h5>
+				    <select name="order_by" id="order_by">
+				    	<option value="">Relevance</option>
+				    	<option {% if order == 'date' %}selected="selected" {% endif %}value="date">Date</option>
+				    	<option {% if order == 'title' %}selected="selected" {% endif %}value="title">Title</option>
+				    	<option {% if order == '-links' %}selected="selected" {% endif %}value="-links">Links</option>
+				    </select>
+				{% endif %}
+	    	</div>
+		</div>
 	</div>
 {% endblock %}
