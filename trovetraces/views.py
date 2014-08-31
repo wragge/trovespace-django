@@ -64,6 +64,7 @@ class PageSearchView(ListSearchView):
 	form_class = PageSearchForm
 	searchqueryset = SearchQuerySet().models(Page).filter(has_links=True)
 	order_by = 'title'
+	current_order = None
 
 	def form_valid(self, form):
 		q = form.cleaned_data.get('q', '')
